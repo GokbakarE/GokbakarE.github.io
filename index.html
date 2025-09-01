@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GokbakarE’s Blog</title>
+  <meta name="description" content="Security Research by GokbakarE" />
+  <meta property="og:title" content="GokbakarE" />
+  <meta property="og:description" content="Security Research by GokbakarE" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="GokbakarE" />
+  <meta name="theme-color" content="#9b59b6" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <style>
+    body {
+      margin: 0;
+      background-color: #1c1c1c; 
+      color: #9b59b6; 
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    header {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      border-bottom: 1px solid #9b59b6;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: #9b59b6;
+      margin: 0;
+      letter-spacing: 1px;
+    }
+
+    .author {
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .author img {
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      border: 2px solid #9b59b6;
+    }
+
+    .author-name {
+      font-size: 1.2rem;
+      margin: 1rem 0 0.3rem;
+      color: #9b59b6;
+    }
+
+    .author-bio {
+      color: #9b59b6;
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    main {
+      max-width: 800px;
+      margin: auto;
+      padding: 1rem;
+    }
+
+    h3 {
+      text-align: center;
+      color: #9b59b6;
+      margin-bottom: 2rem;
+      font-size: 1.5rem;
+    }
+
+    .post-item {
+      background-color: #1f1f1f;
+      border: 1px solid #9b59b6;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .post-item:hover {
+      background-color: #333;
+      transform: scale(1.01);
+    }
+
+    .post-item-title {
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    .post-item-title a {
+      color: #9b59b6;
+      text-decoration: none;
+      border-bottom: 1px dotted #9b59b6;
+    }
+
+    .post-item-title a:hover {
+      border-bottom: 1px solid #b57ee6;
+    }
+
+    .post-item-meta {
+      color: #9b59b6;
+      font-size: 0.85rem;
+      margin-top: 0.4rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid #9b59b6;
+      color: #9b59b6;
+      font-size: 0.9rem;
+    }
+
+    .social-icons {
+      margin-top: 1rem;
+    }
+
+    .social-icons a {
+      margin: 0 0.5rem;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .social-icons img {
+      width: 24px;
+      height: 24px;
+      filter: brightness(0) saturate(100%) invert(29%) sepia(28%) saturate(1311%) hue-rotate(246deg) brightness(89%) contrast(92%);
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .social-icons a:hover img {
+      transform: scale(1.1);
+      filter: brightness(0) saturate(100%) invert(36%) sepia(15%) saturate(2041%) hue-rotate(265deg) brightness(108%) contrast(98%);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>GokbakarE’s Blog</h1>
+  </header>
+
+  <div class="author">
+    <img src="avatar.png" alt="GokbakarE Avatar">
+    <h2 class="author-name">GokbakarE</h2>
+    <p class="author-bio">
+      Researching security topics and sharing my projects with the community, mainly working with C++ and YARA.
+    </p>
+  </div>
+
+  <main>
+    <h3>Recent Posts</h3>
+    <article class="post-item">
+      <h4 class="post-item-title"><a href="post/post1.html">Technical Review of "ABC Overlay" Based RAT Variants</a></h4>
+      <time class="post-item-meta">24 Jun 2025</time>
+    </article>
+    <article class="post-item">
+      <h4 class="post-item-title"><a href="post/project1.html">Disassembler for SuperH instruction set architecture variants: DisSH</a></h4>
+      <time class="post-item-meta">28 Aug 2025</time>
+    </article>
+    <article class="post-item">
+      <h4 class="post-item-title"><a href="post/project2.html">Disassembler for Fujitsu FR instruction set architecture: DisFR</a></h4>
+      <time class="post-item-meta">28 Aug 2025</time>
+    </article>
+
+  </main>
+
+  <footer>
+    <p>© 2025 GokbakarE</p>
+    <div class="social-icons">
+      <a href="https://github.com/GokbakarE" target="_blank" title="GitHub">
+        <img src="svg/github.svg" alt="GitHub">
+      </a>
+      <a href="https://gitlab.com/GokbakarE" target="_blank" title="GitLab">
+        <img src="svg/gitlab.svg" alt="GitLab">
+      </a>
+      <a href="https://infosec.exchange/@GokbakarE" target="_blank" title="Infosec.exchange">
+        <img src="svg/infosec.svg" alt="Infosec.exchange">
+      </a>
+      <a href="https://www.instagram.com/gokbakar_e/" target="_blank" title="Instagram">
+        <img src="svg/insta.svg" alt="Instagram">
+      </a>
+      <a href="https://x.com/gokbakare" target="_blank" title="X">
+        <img src="svg/x.svg" alt="X">
+      </a>
+    </div>
+  </footer>
+</body>
+</html>
