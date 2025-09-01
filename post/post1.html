@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Technical Review of "ABC Overlay" Based RAT Variants | GokbakarE's Blog</title>
+  <meta name="description" content="Technical analysis of ABC Overlay-based RAT variants and examination of their common features." />
+  <meta property="og:title" content="Technical Review of &quot;ABC Overlay&quot; Based RAT Variants | GokbakarE's Blog" />
+  <meta property="og:description" content="Technical analysis of ABC Overlay-based RAT variants and examination of their common features." />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="GokbakarE's Blog" />
+  <meta name="theme-color" content="#9b59b6" />
+  <link rel="icon" type="image/png" href="../favicon.png" />
+  <style>
+    body {
+      margin: 0;
+      background-color: #1c1c1c;
+      color: #e0cfff;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.8;
+      padding: 0 1rem;
+    }
+
+    header {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      border-bottom: 1px solid #9b59b6;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      margin: 0;
+      color: #9b59b6;
+    }
+
+    article {
+      max-width: 800px;
+      margin: 2rem auto;
+      background-color: #2a2a2a;
+      border: 1px solid #9b59b6;
+      border-radius: 6px;
+      padding: 1.5rem;
+    }
+
+    article h2 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      color: #9b59b6;
+    }
+
+    article h3 {
+      font-size: 1.2rem;
+      color: #b57ee6;
+      margin-top: 1.5rem;
+    }
+
+    article p, article li {
+      margin-bottom: 1rem;
+    }
+
+    article pre {
+      background-color: #1a1a1a;
+      border-left: 3px solid #9b59b6;
+      padding: 1rem;
+      overflow-x: auto;
+      color: #e0cfff;
+      border-radius: 4px;
+    }
+
+    article code {
+      font-family: 'Courier New', monospace;
+      background-color: #1a1a1a;
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+      color: #e0cfff;
+    }
+
+    article img {
+      max-width: 100%;
+      border: 1px solid #444;
+      margin: 1rem 0;
+      display: block;
+    }
+
+    .image-caption {
+      text-align: center;
+      font-style: italic;
+      color: #999;
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid #9b59b6;
+      color: #9b59b6;
+      font-size: 0.9rem;
+    }
+
+    .social-icons {
+      margin-top: 1rem;
+    }
+
+    .social-icons a {
+      margin: 0 0.5rem;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .social-icons img {
+      width: 24px;
+      height: 24px;
+      filter: brightness(0) saturate(100%) invert(29%) sepia(28%) saturate(1311%) hue-rotate(246deg) brightness(89%) contrast(92%);
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .social-icons a:hover img {
+      transform: scale(1.1);
+      filter: brightness(0) saturate(100%) invert(36%) sepia(15%) saturate(2041%) hue-rotate(265deg) brightness(108%) contrast(98%);
+    }
+    
+
+    a.back-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      color: #9b59b6;
+      text-decoration: none;
+      border-bottom: 1px dotted #9b59b6;
+    }
+
+    a.back-link:hover {
+      border-bottom: 1px solid #b57ee6;
+    }
+
+    .rat-list {
+      columns: 2;
+      column-gap: 2rem;
+    }
+
+    @media (max-width: 600px) {
+      .rat-list {
+        columns: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>GokbakarE's Blog</h1>
+  </header>
+
+  <article>
+    <h2>Technical Review of "ABC Overlay" Based RAT Variants</h2>
+    <p><em>Published on July 24, 2025</em></p>
+
+    <p>The purpose of this article is to explain, within a technical framework, the <strong>GUI structure</strong> and <strong>overlay addressing technique</strong> commonly used in some RAT (Remote Access Trojan) creation software that caught my attention during my personal research.</p>
+
+    <h3>Introduction</h3>
+    <p>Some RAT creation tools are configured using similar techniques, almost as exact copies of each other. The common point that stands out in these types of RATs is that the configuration data is located in the <strong>overlay</strong> section of the <strong>PE file</strong> <em>unencrypted</em> or only hidden using a very simple method.</p>
+    
+    <p>I have named the RATs falling into this category as <strong>"ABC RATs"</strong> due to their similar data formats and structures.</p>
+
+    <h3>Technical Features</h3>
+    <p>The <strong>overlay</strong> section in these RATs typically contains the following data:</p>
+    
+    <ul>
+      <li>IP address (command and control server)</li>
+      <li>Port number</li>
+      <li>Username</li>
+      <li>RAT name</li>
+      <li>Antivirus disable (AV kill)</li>
+      <li>Process termination (process kill)</li>
+      <li>Configurations such as spreading via USB (USB spread), etc.</li>
+    </ul>
+
+    <p><strong>Technical Observation:</strong> All analyzed builders write data to the <code>overlay</code> area of the PE file in a <strong>plaintext</strong> and <strong>fixed pattern</strong>. This structure can be easily seen directly with tools like hexdump.</p>
+
+    <p><strong>Common fixed pattern:</strong></p>
+    <pre>61 62 63 63 62 61 32 31 65 64 73 61 64 78 64 61 62 63 63 62 61 33 31 32 34 61 62 63 63 62 61 63</pre>
+
+    <p>This data is typically structured as <code>abccba&lt;data&gt;abccba</code> and is embedded at the <strong>end of the file</strong> (overlay). This segment does not have a defined offset in the PE header, meaning the end of the file is determined directly through analysis.</p>
+
+    <p><strong>Import Feature:</strong> In all listed RAT samples, only <code>mscoree.dll</code> is imported, and specifically the <code>_CorExeMain</code> function is called. This indicates that a .NET-based payload is embedded.</p>
+
+    <h4>Overlay Hex Format:</h4>
+    <pre>abccba127.0.0.1abccba55abccbaMr.Errorabccba0abccbaName.exeabccba0abccbaname.exe...</pre>
+
+    <h3>YARA Rule</h3>
+    <p>The following YARA rule is specifically prepared to detect ABC RAT variants:</p>
+    <pre>
+rule ABC_RATs
+{
+    meta:
+        description = "ABC RAT's Detector Rule "
+        author = "GokbakarE"
+        date = "24-07-2025"
+        license = "MIT License"
+    strings:
+        $Overlay = { 61 62 63 63 62 61 }
+    condition:
+        pe.is_pe and
+        pe.imports("mscoree.dll") and
+        pe.imports("mscoree.dll", "_CorExeMain") and
+        $Overlay in (pe.overlay.offset .. pe.overlay.offset + pe.overlay.size)    
+}
+    </pre>
+
+    <p><strong>Explanation:</strong> The rule focuses on both the <code>mscoree.dll</code> import and the fixed signature in the overlay region. It provides a high hit rate. It can be easily integrated into a signature-based scanning system relying on overlay analysis.</p>
+
+    <p>These configurations are placed at the end of the file (overlay area) with a specific pattern. The most commonly used pattern is as follows:</p>
+    
+    <pre>abccba&lt;data&gt;abccba</pre>
+    
+    <p>An example of this structure is given below:</p>
+    
+    <h4>Binary:</h4>
+    <pre>61 62 63 63 62 61 31 32 37 2E 30 2E 30 2E 31 61 62 63 63 62 61 35 35 ...</pre>
+    
+    <h4>String equivalent:</h4>
+    <pre>abccba127.0.0.1abccba55abccbaMr.Errorabccba0abccbaName.exeabccba0abccbaname.exe...</pre>
+    
+    <p>In this example:</p>
+    <ul>
+      <li><code>127.0.0.1</code> — C2 IP address</li>
+      <li><code>55</code> — Port number</li>
+      <li><code>Mr.Error</code> — Username or alias</li>
+      <li><code>Name.exe</code>, <code>name.exe</code> — Filename/clone name</li>
+      <li><code>0</code>, <code>1</code> — Boolean configurations (e.g., USB spread on/off)</li>
+    </ul>
+
+    <h3>Common Graphical User Interface (GUI) Features</h3>
+    <p>The interfaces of the <strong>builder software</strong> that create these RATs are also quite similar to each other:</p>
+    
+    <img src="1.png" alt="ABC RAT Builder GUI Example" />
+    <p class="image-caption">Typical GUI structure of ABC RAT Builders (Example 1)</p>
+    
+    <img src="2.png" alt="ABC RAT Builder GUI Example 2" />
+    <p class="image-caption">Typical GUI structure of ABC RAT Builders (Example 2)</p>
+    
+    <p>These builders generally include:</p>
+    <ul>
+      <li>A simple C2 configuration field</li>
+      <li>Options like USB spread, antivirus disable activated with 0/1</li>
+      <li>Creating the EXE file with a "Build" button</li>
+    </ul>
+
+    <h3>Detected "ABC RAT" Based Builders</h3>
+    <p>Analysis has determined that the following builder software use the same overlay format and structure:</p>
+    
+    <div class="rat-list">
+      <ul>
+        <li><strong>Snake_Worm_v0_1</strong></li>
+        <li><strong>Dark_Virus_RAT_v0_2_0_Beta</strong></li>
+        <li><strong>BHF_Rat_v0_2_Beta</strong></li>
+        <li><strong>Kurd_Rat_v1_0_Beta_Online</strong></li>
+        <li><strong>Eagle_RAT_1_2</strong></li>
+        <li><strong>Epsilon_RAT_v1_1</strong></li>
+        <li><strong>Viral_Rat</strong></li>
+        <li><strong>VanToM_W0rm_1_2</strong></li>
+        <li><strong>FD_Rat</strong></li>
+        <li><strong>Almjhool_1_1</strong></li>
+        <li><strong>TiG3R_RAT_v1_0</strong></li>
+        <li><strong>SpyGate_RAT_v_0_2_6</strong></li>
+        <li><strong>VanToM_RAT_1_3</strong></li>
+        <li><strong>VanToM_RAT_1_0</strong></li>
+        <li><strong>Wormins_RAT_0_8</strong></li>
+        <li><strong>Virus_Rat_v7_0</strong></li>
+        <li><strong>Virus_Rat_v6_0</strong></li>
+        <li><strong>Virus_Rat_v4_0</strong></li>
+      </ul>
+    </div>
+    
+    <p><strong>The builder software listed above, although bearing formally different names, largely use the same infrastructure and produce similar overlay formats. This situation suggests that these tools are either produced by the same developer or that the same source code is repackaged by different individuals.</strong></p>
+
+    <h3>Example: VanToM RAT Overlay Analysis</h3>
+    <p>Below is the structure detected in the overlay section of a RAT file created with the <em>VanToM_RAT_1_0</em> software, given directly:</p>
+    
+    <pre>abccba127.0.0.1abccba55abccbaMr.Errorabccba0abccbaName.exeabccba0abccbaname.exeabccba0abccba0abccba0abccba0abccba0abccba0abccba0abccba0abccba0abccba0</pre>
+    
+    <p><strong>This structure contains the following:</strong></p>
+    <ul>
+      <li><strong>127.0.0.1</strong> → Command and control (C2) server</li>
+      <li><strong>55</strong> → Port used</li>
+      <li><strong>Mr.Error</strong> → Username or system identifier</li>
+      <li><strong>Name.exe</strong>, <strong>name.exe</strong> → Filenames to be created or cloned on the system</li>
+      <li>Subsequent <strong>0</strong>/<strong>1</strong> values → Boolean-based configurations (e.g., auto-start, AV bypass, etc.)</li>
+    </ul>
+
+    <h3>Importance for Security and Detection</h3>
+    <p>These types of RAT configurations prefer to place data in the overlay section of the PE file rather than standard sections, especially to evade antivirus detection. However, this method:</p>
+    
+    <ul>
+      <li>Can be easily detected as it does not include any encryption or data integrity check.</li>
+      <li>The schematic structure of the overlay area (e.g., <code>abccba&lt;data&gt;abccba</code>) can be quickly captured by signature-based analysis.</li>
+      <li>Configurations can be read directly with simple string analysis.</li>
+    </ul>
+
+    <h3>Conclusion</h3>
+    <p>This malware family, defined as "ABC RATs", creates a wide variation using the same structure, format, and builder logic, albeit with low-level obfuscation techniques. This situation provides an advantage for security researchers to detect similar RATs and automate analysis processes.</p>
+    
+    <p><strong>Recommendations:</strong></p>
+    <ul>
+      <li>Develop YARA rules based on overlay analysis</li>
+      <li>Use static analysis tools that detect fixed markers like <code>abccba</code></li>
+      <li>Parse overlay data to classify configurations</li>
+      <li>Perform hash and visual similarity comparisons based on the GUI structures and icons of builder software</li>
+    </ul>
+
+    <p><strong>Author:<br/>GokbakarE<br/>
+    Date: July 24, 2025</strong></p>
+
+    <a class="back-link" href="../index.html">&larr; Back to Home</a>
+  </article>
+
+  <footer>
+    <p>© 2025 GokbakarE</p>
+    <div class="social-icons">
+      <a href="https://github.com/GokbakarE" target="_blank" title="GitHub">
+        <img src="../svg/github.svg" alt="GitHub">
+      </a>
+      <a href="https://gitlab.com/GokbakarE" target="_blank" title="GitLab">
+        <img src="../svg/gitlab.svg" alt="GitLab">
+      </a>
+      <a href="https://infosec.exchange/@GokbakarE" target="_blank" title="Infosec.exchange">
+        <img src="../svg/infosec.svg" alt="Infosec.exchange">
+      </a>
+      <a href="https://www.instagram.com/gokbakar_e/" target="_blank" title="Instagram">
+        <img src="../svg/insta.svg" alt="Instagram">
+      </a>
+      <a href="https://x.com/gokbakare" target="_blank" title="X">
+        <img src="../svg/x.svg" alt="X">
+      </a>
+    </div>
+  </footer>
+</body>
+</html>

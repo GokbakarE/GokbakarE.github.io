@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DisSH - SuperH Disassembler Technical Overview | GokbakarE's Blog</title>
+  <meta name="description" content="Technical analysis of DisSH, a professional SuperH architecture disassembler written in C++20." />
+  <meta property="og:title" content="DisSH - SuperH Disassembler Technical Overview | GokbakarE's Blog" />
+  <meta property="og:description" content="Technical analysis of DisSH, a professional SuperH architecture disassembler written in C++20." />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="GokbakarE's Blog" />
+  <meta name="theme-color" content="#9b59b6" />
+  <link rel="icon" type="image/png" href="../favicon.png" />
+  <style>
+    body {
+      margin: 0;
+      background-color: #1c1c1c;
+      color: #e0cfff;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.8;
+      padding: 0 1rem;
+    }
+
+    header {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      border-bottom: 1px solid #9b59b6;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      margin: 0;
+      color: #9b59b6;
+    }
+
+    article {
+      max-width: 800px;
+      margin: 2rem auto;
+      background-color: #2a2a2a;
+      border: 1px solid #9b59b6;
+      border-radius: 6px;
+      padding: 1.5rem;
+    }
+
+    article h2 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      color: #9b59b6;
+    }
+
+    article h3 {
+      font-size: 1.2rem;
+      color: #b57ee6;
+      margin-top: 1.5rem;
+    }
+
+    article p, article li {
+      margin-bottom: 1rem;
+    }
+
+    article pre {
+      background-color: #1a1a1a;
+      border-left: 3px solid #9b59b6;
+      padding: 1rem;
+      overflow-x: auto;
+      color: #e0cfff;
+      border-radius: 4px;
+    }
+
+    article code {
+      font-family: 'Courier New', monospace;
+      background-color: #1a1a1a;
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+      color: #e0cfff;
+    }
+
+    article img {
+      max-width: 100%;
+      border: 1px solid #444;
+      margin: 1rem 0;
+      display: block;
+    }
+
+    .image-caption {
+      text-align: center;
+      font-style: italic;
+      color: #999;
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid #9b59b6;
+      color: #9b59b6;
+      font-size: 0.9rem;
+    }
+
+    .social-icons {
+      margin-top: 1rem;
+    }
+
+    .social-icons a {
+      margin: 0 0.5rem;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .social-icons img {
+      width: 24px;
+      height: 24px;
+      filter: brightness(0) saturate(100%) invert(29%) sepia(28%) saturate(1311%) hue-rotate(246deg) brightness(89%) contrast(92%);
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .social-icons a:hover img {
+      transform: scale(1.1);
+      filter: brightness(0) saturate(100%) invert(36%) sepia(15%) saturate(2041%) hue-rotate(265deg) brightness(108%) contrast(98%);
+    }
+    
+    a.back-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      color: #9b59b6;
+      text-decoration: none;
+      border-bottom: 1px dotted #9b59b6;
+    }
+
+    a.back-link:hover {
+      border-bottom: 1px solid #b57ee6;
+    }
+
+    .feature-list {
+      columns: 2;
+      column-gap: 2rem;
+    }
+
+    @media (max-width: 600px) {
+      .feature-list {
+        columns: 1;
+      }
+    }
+    
+    .command {
+      background-color: #1a1a1a;
+      padding: 0.5rem;
+      border-radius: 4px;
+      margin: 0.5rem 0;
+      font-family: 'Courier New', monospace;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>GokbakarE's Blog</h1>
+  </header>
+
+  <article>
+    <h2>DisSH - SuperH Disassembler Technical Overview</h2>
+    <p><em>Published on August 28, 2025</em></p>
+
+    <p>This article provides a technical overview of <strong>DisSH</strong>, a professional, lightweight SuperH architecture disassembler written in C++20. I'll explore its architecture, features, and implementation details.</p>
+
+    <h3>Introduction</h3>
+    <p>DisSH is a modern disassembler specifically designed for the SuperH microprocessor family, which was developed by Hitachi and is used in various embedded systems, including the Sega Saturn and Dreamcast consoles.</p>
+    
+    <p>The tool is built with a focus on:</p>
+    <ul>
+      <li>Clean, modular C++20 codebase</li>
+      <li>Support for multiple SuperH instruction sets</li>
+      <li>Cross-platform compatibility</li>
+      <li>Extensibility for future architectures</li>
+    </ul>
+    
+    <p>The main components include:</p>
+    <ul>
+      <li><strong>Core Disassembly Engine</strong> - Handles instruction decoding</li>
+      <li><strong>Architecture Modules</strong> - Support for different SuperH variants</li>
+      <li><strong>Output Formatters</strong> - Generate readable assembly output</li>
+      <li><strong>Utility Libraries</strong> - Shared functionality</li>
+    </ul>
+
+    <h3>Supported Instruction Sets</h3>
+    <p>DisSH supports multiple SuperH instruction set variants:</p>
+    
+    <div class="feature-list">
+      <ul>
+        <li><strong>SuperH1</strong></li>
+        <li><strong>SuperH2</strong></li>
+        <li><strong>SuperH3</strong></li>
+        <li><strong>SuperH3-E</strong></li>
+        <li><strong>SuperH3-DSP</strong></li>
+        <li><strong>SuperH4</strong></li>
+        <li><strong>SuperH4-A</strong></li>
+        <li><strong>SuperH-DSP</strong></li>
+      </ul>
+    </div>
+
+    <h3>Build System and Requirements</h3>
+    <p>DisSH uses a simple Makefile-based build system with the following requirements:</p>
+    
+    <pre>
+- C++20 compatible compiler (g++ 10 or newer)
+- GNU Make
+- Linux or macOS environment
+    </pre>
+    
+    <p><strong>Build Process:</strong></p>
+    
+    <div class="command">git clone https://github.com/GokbakarE/DisSH.git
+    cd DisSH
+    make
+    cd lib
+    make</div>
+    
+    <p>After successful compilation, the <code>DisSH</code> executable will be available in your system path.</p>
+
+    <h3>Usage Examples</h3>
+    <p>Basic usage syntax:</p>
+    
+    <div class="command">DisSH [options] &lt;16-bit-input&gt;</div>
+    
+    <p>Available options:</p>
+    
+    <pre>
+--SuperH1      # Process as SuperH1 architecture
+--SuperH2      # Process as SuperH2 architecture  
+--SuperH3      # Process as SuperH3 architecture
+--SuperH3E     # Process as SuperH3E architecture
+--SuperH3DSP   # Process as SuperH3DSP architecture
+--SuperH4      # Process as SuperH4 architecture
+--SuperH4A     # Process as SuperH4A architecture
+--SuperHDSP    # Process as SuperHDSP architecture
+    </pre>
+
+    <h3>Extensibility and Customization</h3>
+    <p>DisSH is designed to be easily extensible. Developers can:</p>
+    
+    <ul>
+      <li>Add support for new SuperH variants by implementing decoder functions</li>
+      <li>Customize output formatting through template classes</li>
+      <li>Extend the utility libraries for additional functionality</li>
+    </ul>
+
+    <h3>License and Distribution</h3>
+    <p>DisSH is licensed under the GNU AGPLv3 license, which ensures that improvements to the codebase remain open source. This makes it suitable for:</p>
+    
+    <ul>
+      <li>Academic research</li>
+      <li>Commercial projects that comply with AGPL terms</li>
+      <li>Integration with other open source tools</li>
+      <li>Customization for specific use cases</li>
+    </ul>
+
+    <h3>Conclusion</h3>
+    <p>DisSH provides a modern, efficient solution for disassembling SuperH architecture binaries. Its modular design, comprehensive architecture support, and clean codebase make it an excellent tool for reverse engineers, embedded systems developers, and anyone working with SuperH processors.</p>
+    
+    <p><strong>Key Advantages:</strong></p>
+    <ul>
+      <li>Comprehensive SuperH architecture support</li>
+      <li>Clean, modern C++20 implementation</li>
+      <li>Modular and extensible design</li>
+      <li>Cross-platform compatibility</li>
+      <li>Open source with AGPLv3 license</li>
+    </ul>
+
+    <p><strong>Author:<br/>GokbakarE<br/>
+    Date: August 28, 2025 
+    <br><a href="https://github.com/GokbakarE/DisSH" style="color: purple;">https://github.com/GokbakarE/DisSH</a><br></p>
+
+    <a class="back-link" href="../index.html">&larr; Back to Home</a>
+  </article>
+
+  <footer>
+    <p>© 2025 GokbakarE</p>
+    <div class="social-icons">
+      <a href="https://github.com/GokbakarE" target="_blank" title="GitHub">
+        <img src="../svg/github.svg" alt="GitHub">
+      </a>
+      <a href="https://gitlab.com/GokbakarE" target="_blank" title="GitLab">
+        <img src="../svg/gitlab.svg" alt="GitLab">
+      </a>
+      <a href="https://infosec.exchange/@GokbakarE" target="_blank" title="Infosec.exchange">
+        <img src="../svg/infosec.svg" alt="Infosec.exchange">
+      </a>
+      <a href="https://www.instagram.com/gokbakar_e/" target="_blank" title="Instagram">
+        <img src="../svg/insta.svg" alt="Instagram">
+      </a>
+      <a href="https://x.com/gokbakare" target="_blank" title="X">
+        <img src="../svg/x.svg" alt="X">
+      </a>
+    </div>
+  </footer>
+</body>
+</html>
