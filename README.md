@@ -19,6 +19,6 @@ License
 
 This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
 
-For complete license terms and conditions, please see the LICENSE.md file.
+For complete license terms and conditions, please see the [LICENSE.md](LICENSE.md) file.
 
 By using this software, you agree to be bound by the terms of this license agreement.
